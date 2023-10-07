@@ -30,7 +30,7 @@ struct Operation {
     char* move;
     char* date;
     Book book;
-    Client human;
+    Client client;
 };
 
 struct Library {
@@ -142,7 +142,7 @@ Client ClientInput() { // ввод клиента (читателя)
 Book BookInit(char* name, Author author, int year) {
     Book buf;
 
-    if (strlen(name) == 0 || year <= 1000) {
+    if (strlen(name) == 0 || year < 1000) {
         exit(-1);
     }
     else {
@@ -163,15 +163,32 @@ Book BookInput(Author author) {
     do {
         scanf("%d", &year);
         if (year < 1000) {
-            puts("А теперь нормально");
+            puts("А теперь введи нормально");
         }
     } while (year < 1000);
+    wait();
 
     Book buf = BookInit(name, author, year);
     return buf;
 }
 
-Operation OperationInput() {
+Operation OperationInit(char* move, char* date, Book book, Client client) {
+    Operation buf;
+
+    if (strlen(move) == 0 || strlen(date) != LenDate) {
+        exit(-1);
+    }
+    else {
+        buf.book = book;
+        buf.client = client;
+        buf.move = move;
+        buf.date = date;
+    }
+
+    return buf;
+}
+
+Operation OperationInput(Book book, Client client) {
     char* move = (char*)calloc(Len, sizeof(char));
     char* date = (char*)calloc(LenDate, sizeof(char));
 
@@ -179,7 +196,8 @@ Operation OperationInput() {
     gets_s(move, Len);
     puts("Введите дату совершения операции");
     gets_s(date, LenDate);
-    Operation buf;
+
+    Operation buf = OperationInit(move, date, book, client);
     return buf;
 }
 
