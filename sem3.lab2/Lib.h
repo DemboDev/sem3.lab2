@@ -56,12 +56,12 @@ void wait() {
 
 // ќсновные функции
 
-Author AuthorInit(char* name, char* date, char* country) {
+Author AuthorInit(char* name, char* date, char* country) { // инициализаци€ автора
     Author buf;
     if (strlen(name) == 0 || strlen(country) == 0) {
         exit(-1);
     }
-    else if (strlen(date) != 10) {
+    else if (strlen(date) != LenDate) {
         puts("я тупой прост немножко");
         exit(-1);
         }
@@ -77,54 +77,97 @@ Author AuthorInit(char* name, char* date, char* country) {
             }
         }
     return buf;
-}
+} 
 
-Author AuthorInput() {
+Author AuthorInput() { // ввод автора
     char* name = (char*)calloc(Len, sizeof(char));
     char* date = (char*)calloc(LenDate, sizeof(char));
     char* country = (char*)calloc(Len, sizeof(char));
 
     puts("¬ведите им€ автора");
     gets_s(name, Len);
-    puts("¬ведите дату рождени€ автора в формате DD.MM.YYYY");
-    gets_s(date, LenDate);
+    do {
+        do {
+            puts("¬ведите дату рождени€ автора в формате DD.MM.YYYY");
+            gets_s(date, 200);
+        } while (date[0] < '0' || date[0] > '3' || date[1] < '0' || (date[1] > '1' && date[0] > '2') || date[1] > '9' || date[2] != '.' || date[3] < '0' || (date[3] == '1' && date[4] > '2') || date[3] > '1' || date[4] < '0' || (date[4] > '0' && date[3] > '2') || date[4] > '9' || date[5] != '.' || date[6] < '0' || date[6] > '9' || date[7] < '0' || date[7] > '9' || date[8] < '0' || date[8] > '9' || date[9] < '0' || date[9] > '9');
+    } while (strlen(date) != 10);
     puts("¬ведите страну происхождени€ автора");
     gets_s(country, Len);
 
     Author buf = AuthorInit(name, date, country);
     return buf;
-}
+} 
 
-void PrintAuthor(Author author) {
+void PrintAuthor(Author author) { // вывод информации об авторе
     puts(author.name);
     puts(author.date);
     puts(author.country);
 }
 
-Client ClientInput() {
+Client ClientInit(char* name, char* date, char* address) {
+    Client buf;
+
+    if (strlen(name) == 0 || strlen(date) != LenDate || strlen(address) == 0) {
+        exit(-1);
+    }
+    else {
+        buf.name = name;
+        buf.date = date;
+        buf.address = address;
+    }
+    return buf;
+}
+
+Client ClientInput() { // ввод клиента (читател€)
     char* name = (char*)calloc(Len, sizeof(char));
     char* date = (char*)calloc(LenDate, sizeof(char));
     char* address = (char*)calloc(Len, sizeof(char));
 
     puts("¬ведите им€ читател€");
     gets_s(name, Len);
-    puts("¬ведите дату рождени€ читател€");
-    gets_s(date, LenDate);
+    do {
+        do {
+            puts("¬ведите дату рождени€ читател€ в формате DD.MM.YYYY");
+            gets_s(date, 200);
+        } while (date[0] < '0' || date[0] > '3' || date[1] < '0' || (date[1] > '1' && date[0] > '2') || date[1] > '9' || date[2] != '.' || date[3] < '0' || (date[3] == '1' && date[4] > '2') || date[3] > '1' || date[4] < '0' || (date[4] > '0' && date[3] > '2') || date[4] > '9' || date[5] != '.' || date[6] < '0' || date[6] > '9' || date[7] < '0' || date[7] > '9' || date[8] < '0' || date[8] > '9' || date[9] < '0' || date[9] > '9');
+    } while (strlen(date) != 10);
     puts("¬ведите адрес проживани€ читател€");
     gets_s(address, Len);
-    Client buf;
+
+    Client buf = ClientInit(name, date, address);
     return buf;
 }
 
-Book BookInput() {
+Book BookInit(char* name, Author author, int year) {
+    Book buf;
+
+    if (strlen(name) == 0 || year <= 1000) {
+        exit(-1);
+    }
+    else {
+        buf.name = name;
+        buf.author = author;
+        buf.year = year;
+    }
+    return buf;
+}
+
+Book BookInput(Author author) {
     int year;
     char* name = (char*)calloc(Len, sizeof(char));
 
     puts("¬ведите название книги");
     gets_s(name, Len);
     puts("¬ведите год издани€ книги");
-    scanf("%d", &year);
-    Book buf;
+    do {
+        scanf("%d", &year);
+        if (year < 1000) {
+            puts("ј теперь нормально");
+        }
+    } while (year < 1000);
+
+    Book buf = BookInit(name, author, year);
     return buf;
 }
 
