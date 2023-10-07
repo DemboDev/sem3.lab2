@@ -8,7 +8,7 @@ int main()
 {
     setlocale(LC_ALL, "rus");
     SetConsoleCP(1251);
-
+    PrintAuthor(AuthorInput());
 
 
 
