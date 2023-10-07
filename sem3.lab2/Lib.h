@@ -201,10 +201,30 @@ Operation OperationInput(Book book, Client client) {
     return buf;
 }
 
-Library LibraryInp() {
+Library LibraryInit(Book book, Client client, Operation operation, char* address) {
+    if (strlen(address) == 0) {
+        exit(-1);
+    }
+    else {
+        Library buf;
+        buf.address = address;
+        buf.book[0] = book;
+        buf.operations[0] = operation;
+        buf.readers[0] = client;
+
+        return buf;
+    }
+}
+
+Library LibraryInp(Book book, Client client, Operation operation) {
     char* address = (char*)calloc(Len, sizeof(char));
 
+    puts("Введите адрес библиотеки");
     gets_s(address, Len);
-    Library buf;
+
+    Library buf = LibraryInit(book, client, operation, address);
     return buf;
 }
+
+// Дополнительные функции
+
