@@ -247,23 +247,38 @@ void PrintBook(Book book) {
 }
 
 void PrintLibrary(Library library) {
-    puts("Привязанные книги : ");
+    puts("\nБиблиотека:\n\nПривязанные книги : ");
     for (int i = 0; i < library.NumBooks; i++) {
         printf("\"%s\", автор - %s, год издания - %d\n", library.book[i].name, library.book[i].author.name, library.book[i].year);
     }
-    puts("Привязанные читатели : ");
+    puts("\nПривязанные читатели : ");
     for (int i = 0; i < library.NumReaders; i++) {
         printf("Имя: %s, дата рождения: %s, проживает по адресу - %s\n", library.readers[i].name, library.readers[i].date, library.readers[i].address);
     }
-    puts("Операции в библиотеке : ");
+    puts("\nОперации в библиотеке : ");
     for (int i = 0; i < library.NumOperations; i++) {
-        printf("Книга \"%s\", читатель: %s, Дата совершения операции: %s, Тип операции: %s", library.operations[i].book, library.operations[i].client, library.operations[i].date, library.operations[i].move);
+        printf("Книга \"%s\", читатель: %s, Дата совершения операции: %s, Тип операции: %s\n", library.operations[i].book.name, library.operations[i].client.name, library.operations[i].date, library.operations[i].move);
     }
+    puts("");
 }
 
 Library AddBookToLibrary(Library library, Book book) {
     library.NumBooks += 1;
     library.book = (Book*)realloc(library.book, sizeof(Book) * library.NumBooks);
     library.book[library.NumBooks - 1] = book;
+    return library;
+}
+
+Library AddReaderToLibrary(Library library, Client reader) {
+    library.NumReaders += 1;
+    library.readers = (Client*)realloc(library.readers, sizeof(Client) * library.NumReaders);
+    library.readers[library.NumReaders - 1] = reader;
+    return library;
+}
+
+Library AddOperationToLibrary(Library library, Operation operation) {
+    library.NumOperations += 1;
+    library.operations = (Operation*)realloc(library.operations, sizeof(Operation) * library.NumOperations);
+    library.operations[library.NumOperations - 1] = operation;
     return library;
 }
