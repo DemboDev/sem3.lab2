@@ -1,9 +1,10 @@
 ﻿#pragma once
 #define Len 30
-#define LenDate 10
+#define LenDate 11
 #include <iostream>
-#include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <conio.h>
 
 // Структуры
@@ -22,21 +23,24 @@ struct Client {
 
 struct Book {
     char* name;
-    Author author;
+    struct Author author;
     int year;
 };
 
 struct Operation {
     char* move;
     char* date;
-    Book book;
-    Client client;
+    struct Book book;
+    struct Client client;
 };
 
 struct Library {
-    Book* book;
-    Client* readers;
-    Operation* operations;
+    int NumBooks = 1;
+    int NumReaders = 1;
+    int NumOperations = 1;
+    struct Book* book;
+    struct Client* readers;
+    struct Operation* operations;
     char* address;
 };
 
@@ -61,7 +65,7 @@ Author AuthorInit(char* name, char* date, char* country) { // инициализ
     if (strlen(name) == 0 || strlen(country) == 0) {
         exit(-1);
     }
-    else if (strlen(date) != LenDate) {
+    else if (strlen(date) != LenDate - 1) {
         puts("Я тупой прост немножко");
         exit(-1);
         }
@@ -81,7 +85,7 @@ Author AuthorInit(char* name, char* date, char* country) { // инициализ
 
 Author AuthorInput() { // ввод автора
     char* name = (char*)calloc(Len, sizeof(char));
-    char* date = (char*)calloc(LenDate, sizeof(char));
+    char* date = (char*)calloc(LenDate + 1, sizeof(char));
     char* country = (char*)calloc(Len, sizeof(char));
 
     puts("Введите имя автора");
@@ -89,26 +93,20 @@ Author AuthorInput() { // ввод автора
     do {
         do {
             puts("Введите дату рождения автора в формате DD.MM.YYYY");
-            gets_s(date, 200);
+            gets_s(date, LenDate);
         } while (date[0] < '0' || date[0] > '3' || date[1] < '0' || (date[1] > '1' && date[0] > '2') || date[1] > '9' || date[2] != '.' || date[3] < '0' || (date[3] == '1' && date[4] > '2') || date[3] > '1' || date[4] < '0' || (date[4] > '0' && date[3] > '2') || date[4] > '9' || date[5] != '.' || date[6] < '0' || date[6] > '9' || date[7] < '0' || date[7] > '9' || date[8] < '0' || date[8] > '9' || date[9] < '0' || date[9] > '9');
     } while (strlen(date) != 10);
     puts("Введите страну происхождения автора");
     gets_s(country, Len);
 
-    Author buf = AuthorInit(name, date, country);
-    return buf;
+    Author buffer = AuthorInit(name, date, country);
+    return buffer;
 } 
-
-void PrintAuthor(Author author) { // вывод информации об авторе
-    puts(author.name);
-    puts(author.date);
-    puts(author.country);
-}
 
 Client ClientInit(char* name, char* date, char* address) {
     Client buf;
 
-    if (strlen(name) == 0 || strlen(date) != LenDate || strlen(address) == 0) {
+    if (strlen(name) == 0 || strlen(date) != LenDate - 1|| strlen(address) == 0) {
         exit(-1);
     }
     else {
@@ -121,7 +119,7 @@ Client ClientInit(char* name, char* date, char* address) {
 
 Client ClientInput() { // ввод клиента (читателя)
     char* name = (char*)calloc(Len, sizeof(char));
-    char* date = (char*)calloc(LenDate, sizeof(char));
+    char* date = (char*)calloc(LenDate + 1, sizeof(char));
     char* address = (char*)calloc(Len, sizeof(char));
 
     puts("Введите имя читателя");
@@ -129,7 +127,7 @@ Client ClientInput() { // ввод клиента (читателя)
     do {
         do {
             puts("Введите дату рождения читателя в формате DD.MM.YYYY");
-            gets_s(date, 200);
+            gets_s(date, LenDate);
         } while (date[0] < '0' || date[0] > '3' || date[1] < '0' || (date[1] > '1' && date[0] > '2') || date[1] > '9' || date[2] != '.' || date[3] < '0' || (date[3] == '1' && date[4] > '2') || date[3] > '1' || date[4] < '0' || (date[4] > '0' && date[3] > '2') || date[4] > '9' || date[5] != '.' || date[6] < '0' || date[6] > '9' || date[7] < '0' || date[7] > '9' || date[8] < '0' || date[8] > '9' || date[9] < '0' || date[9] > '9');
     } while (strlen(date) != 10);
     puts("Введите адрес проживания читателя");
@@ -175,7 +173,7 @@ Book BookInput(Author author) {
 Operation OperationInit(char* move, char* date, Book book, Client client) {
     Operation buf;
 
-    if (strlen(move) == 0 || strlen(date) != LenDate) {
+    if (strlen(move) == 0 || strlen(date) != LenDate - 1) {
         exit(-1);
     }
     else {
@@ -190,7 +188,7 @@ Operation OperationInit(char* move, char* date, Book book, Client client) {
 
 Operation OperationInput(Book book, Client client) {
     char* move = (char*)calloc(Len, sizeof(char));
-    char* date = (char*)calloc(LenDate, sizeof(char));
+    char* date = (char*)calloc(LenDate + 1, sizeof(char));
 
     puts("Введите тип совершённой операции");
     gets_s(move, Len);
@@ -208,9 +206,15 @@ Library LibraryInit(Book book, Client client, Operation operation, char* address
     else {
         Library buf;
         buf.address = address;
-        buf.book[0] = book;
-        buf.operations[0] = operation;
-        buf.readers[0] = client;
+
+        buf.book = (Book*)realloc(buf.book, sizeof(Book) * buf.NumBooks);
+        buf.book[buf.NumBooks - 1] = book;
+
+        buf.operations = (Operation*)realloc(buf.book, sizeof(Operation) * buf.NumBooks);
+        buf.operations[buf.NumOperations - 1] = operation;
+
+        buf.readers = (Client*)realloc(buf.book, sizeof(Client) * buf.NumBooks);
+        buf.readers[buf.NumReaders - 1] = client;
 
         return buf;
     }
@@ -228,3 +232,37 @@ Library LibraryInp(Book book, Client client, Operation operation) {
 
 // Дополнительные функции
 
+void PrintAuthor(Author author) { // вывод информации об авторе
+    puts(author.name);
+    puts(author.date);
+    puts(author.country);
+}
+
+void PrintBook(Book book) {
+    puts(book.name);
+    printf("%d\n", book.year);
+    puts(book.author.country);
+    puts(book.author.name);
+    puts(book.author.date);
+}
+
+void PrintLibrary(Library library) {
+    puts("Привязанные книги : ");
+    for (int i = 0; i < library.NumBooks; i++) {
+        printf("\"%s\", автор - %s, год издания - %d\n", library.book[i].name, library.book[i].author, library.book[i].year);
+    }
+    puts("Привязанные читатели : ");
+    for (int i = 0; i < library.NumReaders; i++) {
+        printf("Имя: %s, дата рождения: %s, проживает по адресу - %d\n", library.readers[i].name, library.readers[i].date, library.readers[i].address);
+    }
+    puts("Операции в библиотеке : ");
+    for (int i = 0; i < library.NumOperations; i++) {
+        library.operations[i].client;
+    }
+}
+
+Library AddBookToLibrary(Library library, Book book) {
+    library.book[library.NumBooks] = book;
+    library.NumBooks++;
+    return library;
+}
