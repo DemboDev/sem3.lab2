@@ -16,8 +16,7 @@ int main()
     Client client = ClientInput();
     Operation operation = OperationInput(book, client);
     Library library = LibraryInp(book, client, operation);
-    PrintLibrary(library);
-    AddBookToLibrary(library, BookInput(author));
+    library = AddBookToLibrary(library, BookInput(author));
     PrintLibrary(library);
     return 0;
 }

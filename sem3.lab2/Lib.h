@@ -207,13 +207,13 @@ Library LibraryInit(Book book, Client client, Operation operation, char* address
         Library buf;
         buf.address = address;
 
-        buf.book = (Book*)realloc(buf.book, sizeof(Book) * buf.NumBooks);
+        buf.book = (Book*)malloc(sizeof(Book));
         buf.book[buf.NumBooks - 1] = book;
 
-        buf.operations = (Operation*)realloc(buf.book, sizeof(Operation) * buf.NumBooks);
+        buf.operations = (Operation*)malloc(sizeof(Operation));
         buf.operations[buf.NumOperations - 1] = operation;
 
-        buf.readers = (Client*)realloc(buf.book, sizeof(Client) * buf.NumBooks);
+        buf.readers = (Client*)malloc(sizeof(Client));
         buf.readers[buf.NumReaders - 1] = client;
 
         return buf;
@@ -249,20 +249,21 @@ void PrintBook(Book book) {
 void PrintLibrary(Library library) {
     puts("Привязанные книги : ");
     for (int i = 0; i < library.NumBooks; i++) {
-        printf("\"%s\", автор - %s, год издания - %d\n", library.book[i].name, library.book[i].author, library.book[i].year);
+        printf("\"%s\", автор - %s, год издания - %d\n", library.book[i].name, library.book[i].author.name, library.book[i].year);
     }
     puts("Привязанные читатели : ");
     for (int i = 0; i < library.NumReaders; i++) {
-        printf("Имя: %s, дата рождения: %s, проживает по адресу - %d\n", library.readers[i].name, library.readers[i].date, library.readers[i].address);
+        printf("Имя: %s, дата рождения: %s, проживает по адресу - %s\n", library.readers[i].name, library.readers[i].date, library.readers[i].address);
     }
     puts("Операции в библиотеке : ");
     for (int i = 0; i < library.NumOperations; i++) {
-        library.operations[i].client;
+        printf("Книга \"%s\", читатель: %s, Дата совершения операции: %s, Тип операции: %s", library.operations[i].book, library.operations[i].client, library.operations[i].date, library.operations[i].move);
     }
 }
 
 Library AddBookToLibrary(Library library, Book book) {
-    library.book[library.NumBooks] = book;
-    library.NumBooks++;
+    library.NumBooks += 1;
+    library.book = (Book*)realloc(library.book, sizeof(Book) * library.NumBooks);
+    library.book[library.NumBooks - 1] = book;
     return library;
 }
